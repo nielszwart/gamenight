@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Gamenight{% endblock %}</title>
+
+		<link href="https://fonts.googleapis.com/css?family=Chakra+Petch|Permanent+Marker" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+      	
+		{% for label, messages in app.flashes %}
+			{% if loop.first %}<div class="flash-messages">{% endif %}
+		    {% for message in messages %}
+		        <div class="flash-message flash-{{ label }}">
+		            {{ message }}
+		        </div>
+		    {% endfor %}
+		    {% if loop.last %}</div>{% endif%}
+	    {% endfor %}
+
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

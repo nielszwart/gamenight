@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}GameNights{% endblock %}</title>
+
+		<link href="https://fonts.googleapis.com/css?family=Chakra+Petch|Permanent+Marker" rel="stylesheet">
+        {% include 'email/base/_styles.twig' %}
+    </head>
+    <body>
+        <h1>Niels invites you to join {{ event.name }}</h1>
+        <p>Hi {{ player.player.name }}!</p>
+        <p>
+        		I cordially invite you to my new event. Since emails are a pain in the ass to create I will keep it short here. You can find the actual invite when you click the button below!
+		</p>
+        <a class="button" href="http://gamenight.nielszwart.nl/invite/{{ event.slug }}?code={{ player.code }}" target="_blank">View invite</a>
+    </body>
+</html>

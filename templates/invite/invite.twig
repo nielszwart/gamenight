@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+{% block title %}Invite to {{ event.name }}{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+	<div class="header-text">
+		<h2>You have been invited to join a GameNights event</h2>
+	</div>
+	<div class="event-image-container">
+		<img class="event-image" src="{{ asset('img/' ~ event.image) }}">
+	</div>
+	<div class="event-description">
+		<h1>{{event.name}}</h1>
+		{{ event.description|raw }}
+	</div>
+	<div class="roster">
+		<h2>Player Roster</h2>
+		{% for player in players %}
+			{% include 'invite/_rosterBlock.twig' %}
+		{% endfor %}
+	</div>
+	<div class="confirm">
+		{% if currentPlayer %}
+			{% if not currentPlayer.confirmed %}
+				<p>To claim your starting place just click the button below!</p>
+				<form method="post">
+					<input type="hidden" name='confirmed' value="1">
+					<input type="hidden" name='player' value="{{ currentPlayer.id }}">
+					<button type="submit" class="confirm-button">Confirm</button>
+				</form>
+			{% endif %}
+		{% else %}
+			<p class="red">You need to click the link in email invitation to be able to claim your starting place.</p>
+		{% endif %}
+	</div>
+</div>
+
+{% if justConfirmed %}
+	<div id="modal-container" class="modal-container">
+		<div id="just-confirmed" class="just-confirmed">
+			<div class="close">
+				<img id="close" class="close-svg" src="{{ asset('img/svg/close.svg') }}">
+			</div>
+			<p>You claimed your spot for the evening!</p>
+			<img class="check" src="{{ asset('img/svg/checked.svg') }}">
+		</div>
+	</div>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="{{ asset('js/eventConfirmed.js') }}"></script>
+{% endblock %}

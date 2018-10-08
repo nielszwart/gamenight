@@ -48,6 +48,11 @@ class EventPlayer
 	 */
 	private $confirmed = false;
 
+	/**
+	 * @ORM\Column(type="boolean")
+	 */
+	private $invite_sent = false;
+
 	public function getId()
 	{
 		return $this->id;
@@ -113,6 +118,16 @@ class EventPlayer
 		return $this->confirmed = true;
 	}	
 
+		public function getInviteSent()
+	{
+		return $this->invite_sent;
+	}
+
+	public function setInviteSent()
+	{
+		return $this->invite_sent = true;
+	}	
+
 	public function edit($values)
 	{
 		if (!empty($values['event'])) {
@@ -130,6 +145,5 @@ class EventPlayer
 		if (!empty($values['code'])) {
 			$this->setCode($values['code']);
 		}	
-
 	}
 }

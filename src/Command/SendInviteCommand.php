@@ -13,12 +13,14 @@ use App\Entity\EventPlayer;
 class SendInviteCommand extends Command
 {
     private $doctrine;
+    private $em;
     private $mailer;
     private $twig;
 
     public function __construct(\Twig_Environment $twig, ContainerInterface $container, \Swift_Mailer $mailer)
     {
         $this->doctrine = $container->get('doctrine');
+        $this->em = $this->doctrine->getManager();
         $this->twig = $twig;
         $this->mailer = $mailer;
         parent::__construct();
@@ -36,26 +38,48 @@ class SendInviteCommand extends Command
     {
         $output->writeln('GETTING EVENT AND PLAYERS');
     	$event = $this->doctrine->getRepository(Event::class)->find($input->getArgument('event'));
-    	$players = $this->doctrine->getRepository(EventPlayer::class)->findBy(['event' => $input->getArgument('event')]);
+    	$players = $this->doctrine->getRepository(EventPlayer::class)->findBy([
+            'event' => $input->getArgument('event'),
+            'confirmed' => false,
+            'invite_sent' => false,
+        ]);
         $output->writeln('Event   : ' . $event->getName());
         $output->writeln('Players : ' . count($players));
 
         $output->writeln('SENDING INVITES');
     	foreach ($players as $player) {
+            $this->setPlayerCode($player);
             $output->write('- Sending to ' . $player->getPlayer()->getEmail() . '...');
-            $this->sendInvite($event, $player);
-            $output->writeln(' Done!');
+            $this->sendInvite($event, $player, $output);
     	}
         $output->writeln('ALL DONE!');
     }
 
-    protected function sendInvite(Event $event, EventPlayer $player)
+    protected function setPlayerCode(EventPlayer $player)
+    {
+        $player->setCode();
+        $this->em->persist($player);
+        $this->em->flush();
+    }
+
+    protected function sendInvite(Event $event, EventPlayer $player, $output)
     {
     	$message = (new \Swift_Message('GameNights invites you to ' . $event->getName()))
     	->setFrom('nielszwart@hotmail.com')
     	->setTo($player->getPlayer()->getEmail())
-    	->setBody($this->twig->render('email/invite.twig', ['event' => $event, 'player' => $player], 'text/html'));
+    	->setBody($this->twig->render('email/invite.twig', ['event' => $event, 'player' => $player], 'text/html'))
+        ->setContentType('text/html');
 
-    	$this->mailer->send($message);
+        try {
+            $this->mailer->send($message);
+        } catch (\Exception $e) {
+            $output->writeln('Failed to send email (mailhog/mailcatcher is probably not running?)');
+            return;
+        }
+
+        $player->setInviteSent();
+        $this->em->persist($player);
+        $this->em->flush();
+        $output->writeln(' Done!');
     }
 }

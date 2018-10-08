@@ -34,7 +34,7 @@ class TestEmailCommand extends Command
     {
     	$message = (new \Swift_Message('Testing email server'))
     	->setFrom('nielszwart@hotmail.com')
-    	->setTo('mail@nielszwart.nl')
+    	->setTo('niels.bla@gmail.com')
     	->setBody('test')
         ->setContentType('text/plain');
 

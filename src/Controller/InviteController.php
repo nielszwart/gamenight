@@ -39,7 +39,10 @@ class InviteController extends BaseController
     		return new RedirectResponse($url->generate('homepage'));
     	}
 
-    	$players = $this->getDoctrine()->getRepository(EventPlayer::class)->findBy(['event' => $event->getId()]);
+    	$players = $this->getDoctrine()->getRepository(EventPlayer::class)->findBy([
+            'event' => $event->getId(),
+            'active' => true,
+        ]);
 
         return $this->render('invite/invite.twig', [
         	'event' => $event,

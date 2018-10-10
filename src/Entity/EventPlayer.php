@@ -53,6 +53,11 @@ class EventPlayer
 	 */
 	private $invite_sent = false;
 
+	/**
+	 * @ORM\Column(type="boolean")
+	 */
+	private $active = true;
+
 	public function getId()
 	{
 		return $this->id;
@@ -118,7 +123,7 @@ class EventPlayer
 		return $this->confirmed = true;
 	}	
 
-		public function getInviteSent()
+	public function getInviteSent()
 	{
 		return $this->invite_sent;
 	}
@@ -127,6 +132,16 @@ class EventPlayer
 	{
 		return $this->invite_sent = true;
 	}	
+
+	public function getActive()
+	{
+		return $this->active;
+	}
+
+	public function setActive()
+	{
+		return $this->active = true;
+	}
 
 	public function edit($values)
 	{

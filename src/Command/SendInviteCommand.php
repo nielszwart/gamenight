@@ -42,6 +42,7 @@ class SendInviteCommand extends Command
             'event' => $input->getArgument('event'),
             'confirmed' => false,
             'invite_sent' => false,
+            'active' => true,
         ]);
         $output->writeln('Event   : ' . $event->getName());
         $output->writeln('Players : ' . count($players));

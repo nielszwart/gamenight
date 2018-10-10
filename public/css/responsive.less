@@ -1,0 +1,51 @@
+@media only screen and (max-width: 1050px) {
+	.wrapper {
+		width: 90%;
+		padding: 20px;
+
+		.roster {
+
+			.player {
+				.player-image-container {
+					.player-image {
+						width: 100%;
+						height: auto;
+					}
+				}
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 500px) {
+	h1 {
+		font-size: 24px;
+	}
+
+	h2 {
+		font-size: 14px;
+	}
+
+    .wrapper {
+		padding: 20px 5px;
+
+		.roster {
+			h2 {
+				font-size: 20px;
+			}
+
+			.player {
+				.player-image-container {
+					position: absolute;
+					opacity: 0.3;
+					width: 35%;
+				}
+
+				.player-info-container .player-info .name .nickname,
+				.player-info-container .player-info .name .realname {
+				    font-size: 15px;
+				}
+			}
+		}
+	}
+}

@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% form_theme form 'form/fields.twig' %}
 {% block title %}Add result{% endblock %}
 
 {% block body %}
@@ -14,7 +14,7 @@
             {{ form_row(form.first) }}
         </div>
 
-        <div class="form-field test">
+        <div class="form-field">
             {{ form_row(form.second) }}
         </div>
 

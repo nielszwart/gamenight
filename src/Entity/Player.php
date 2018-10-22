@@ -26,7 +26,7 @@ class Player
 	 */
 	private $nickname;
 
-		/**
+	/**
 	 * @ORM\Column(type="string")
 	 */
 	private $email;

@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Scores for {{ event.name }}{% endblock %}
+{% block fonts %}<link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">{% endblock %}
+
+{% block body %}
+<div class="livescores">
+	<div class="scores">
+		<div id="totals" class="totals">
+			<div class="score-block totalscores-positioning">
+				<h2>Total Score</h2>
+				<div id="totalscore" class="totalscore">
+					{% for score in scores.totals %}
+						<div id="totals-{{ score.nickname }}" class="score-row">
+							<div class="position">{{ loop.index }}</div>
+							<div class="nickname">{{ score.nickname }}</div>
+							<div class="score" data-score="{{ score.score }}">{{ score.score }}</div>
+							<div class="clear"></div>
+						</div>
+						<div class="clear"></div>				
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+		<div class="clear"></div>
+		{% for game in event.games %}
+			<div class="gamescores">
+				<div class="score-block gamescores-positioning">
+					<h2>{{ game.name }} Scores</h2>
+					<div id="{{ game.slug }}-scores" class="gamescore">
+						{% for score in scores[game.slug] %}
+							<div id="{{ game.slug }}-score-{{ score.nickname }}" class="score-row">
+								<div class="position">{{ loop.index }}</div>
+								<div class="nickname">{{ score.nickname }}</div>
+								<div class="score">{{ score.score }}</div>
+								<div class="games">{{ score.games }}</div>
+								<div class="points">{{ score.points }}</div>
+								<div class="clear"></div>
+							</div>
+							<div class="clear"></div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+		<div class="clear"></div>
+	</div>
+</div>
+
+<div id="new-score-row" class="score-row">
+	<div class="position"></div>
+	<div class="nickname"></div>
+	<div class="score"></div>
+	<div class="games"></div>
+	<div class="points"></div>
+	<div class="clear"></div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+	<script>
+	    var getScoresLink = "/"  + '{{ event.slug }}' + "/get-scores";
+	</script>
+	<script src="{{ asset('js/livescores.js') }}"></script>
+{% endblock %}

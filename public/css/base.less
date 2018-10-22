@@ -6,6 +6,14 @@
 @red: #FF0000;
 @green: #00FF47;
 
+@gradient-dark-grey: #3A3A3A;
+@gradient-light-grey: #585858;
+
+@message-green-bg-color: #DBFFE5;
+@message-green-border-color: #00FF47;
+@message-red-bg-color: #ffdbdb;
+@message-red-border-color: #ff0000;
+
 @grey-border: 1px solid @grey;
 @blue-border: 1px solid @blue;
 @green-border: 1px solid @green;
@@ -44,4 +52,27 @@ strong {
 
 .red {
 	color: @red;
+}
+
+.flash-messages {
+	position: relative;
+	margin: 25px auto;
+	width: 75%;
+
+	.flash-message {
+		padding: 10px 0;
+		border-radius: 5px;
+		text-align: center;
+		font-weight: bold;
+	}
+
+	.flash-success {
+		background-color: @message-green-bg-color;
+		border: 2px solid @message-green-border-color;
+	}
+
+	.flash-error {
+		background-color: @message-red-bg-color;
+		border: 2px solid @message-red-border-color;
+	}
 }

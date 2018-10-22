@@ -35,7 +35,7 @@ class InviteController extends BaseController
 
     	$event = $this->getDoctrine()->getRepository(Event::class)->findOneBy(['slug' => $event]);
     	if (empty($event)) {
-    		$this->addFlash('error', 'Could not find event with given ID');
+    		$this->addFlash('error', 'Could not find event with given slug');
     		return new RedirectResponse($url->generate('homepage'));
     	}
 

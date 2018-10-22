@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add result{% endblock %}
+
+{% block body %}
+<div class="add-result">
+	<h1>Add result</h1>
+	{{ form_start(form) }}
+        <div class="form-field">
+            {{ form_row(form.game) }}
+        </div>
+
+        <div class="form-field">
+            {{ form_row(form.first) }}
+        </div>
+
+        <div class="form-field">
+            {{ form_row(form.second) }}
+        </div>
+
+        <div class="form-field">
+            {{ form_row(form.third) }}
+        </div>
+
+        <div class="form-field">
+            {{ form_row(form.fourth) }}
+        </div>
+
+        <div class="save">
+            <button type="submit" class="submit-button">Save</button>
+        </div>
+	{{ form_end(form) }}
+</div>	
+{% endblock %}

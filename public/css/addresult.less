@@ -1,0 +1,56 @@
+.add-result {
+	width: 90%;
+	max-width: 400px;
+	margin: 20px auto;
+
+	h1 {
+		text-align: center;
+	}
+
+	.form-field {
+		padding: 10px 0;
+
+		label {
+			display: inline-block;
+			font-weight: bold;
+			margin: 5px 0;
+			color: @blue;
+		}
+
+		select:required:invalid {
+		  color: @grey;
+		  font-style: italic;
+		}
+
+		select {
+			width: 100%;
+			padding: 10px 5px;
+			color: black;
+
+			option {
+				color: black;
+				font-style: normal;
+			}
+		}
+	}
+
+	.save {
+		text-align: center;
+
+		.submit-button {
+			background-color: @blue;
+			text-transform: uppercase;
+			color: @white;
+			font-size: 20px;
+			padding: 12px 35px;
+			cursor: pointer;
+			margin-top: 20px;
+			letter-spacing: 2px;
+			border: none;
+
+			&:hover {
+				background-color: @light-blue;
+			}
+		}
+	}
+}

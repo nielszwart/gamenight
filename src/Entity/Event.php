@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity()
@@ -31,10 +32,20 @@ class Event
 	 */
 	private $description;
 
-		/**
+	/**
 	 * @ORM\Column(type="string")
 	 */
 	private $image;
+
+	/**
+	 * @ORM\ManyToMany(targetEntity="Game")
+	 */
+	private $games;
+
+	public function __construct()
+	{
+		$this->games = new ArrayCollection();
+	}
 
 	public function getId()
 	{
@@ -79,6 +90,11 @@ class Event
 	public function setImage($value)
 	{
 		return $this->image = $value;
+	}
+
+	public function getGames()
+	{
+		return $this->games;
 	}
 
 	public function edit($values)

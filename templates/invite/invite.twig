@@ -4,7 +4,7 @@
 {% block body %}
 <div class="wrapper">
 	<audio volume="0.1" controls autoplay loop>
-		<source src="{{ asset('sounds/mariokarttheme.mp3') }}" type="audio/mp3">
+		<source src="{{ asset('sounds/' ~ event.sound) }}" type="audio/mp3">
 	</audio>
 	<div class="clear"></div>
 	<div class="header-text">

@@ -130,6 +130,53 @@ class ScoringService
 		return $scores;
 	}
 
+	public function calculateScoresPuyoPuyo(Event $event, Game $game) 
+	{
+		$results = $this->doctrine->getRepository(Result::class)->findBy([
+			'event' => $event->getId(),
+			'game' => $game->getId(),
+		]);
+
+		$scores = [];
+		foreach ($results as $result) {
+			$scores = $this->setPlayers($scores, $result);
+			if (!empty($result->getThird()) && !empty($result->getFourth())) {
+				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 80;
+				$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
+				$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 50;
+				$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
+				$scores[$result->getThird()->getPlayer()->getId()]['points'] += 30;
+				$scores[$result->getThird()->getPlayer()->getId()]['games']++;
+				$scores[$result->getFourth()->getPlayer()->getId()]['points'] += 0;
+				$scores[$result->getFourth()->getPlayer()->getId()]['games']++;
+			} elseif (!empty($result->getThird()) && empty($result->getFourth())) {
+				$scores = $this->setPlayers($scores, $result);
+				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 80;
+				$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
+				$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 50;
+				$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
+				$scores[$result->getThird()->getPlayer()->getId()]['points'] += 0;
+				$scores[$result->getThird()->getPlayer()->getId()]['games']++;
+			} elseif (empty($result->getThird()) && empty($result->getFourth())) {
+				$scores = $this->setPlayers($scores, $result);
+				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 80;
+				$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
+				$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 30;
+				$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
+			}
+		}
+
+		foreach ($scores as &$score) {
+			$score['score'] = round($score['points'] / $score['games']);
+		}
+		unset($score);
+
+		$scores = $this->sortByScore($scores);
+
+		return $scores;		
+	}
+
+
 	protected function setPlayers($scores, Result $result)
 	{
 		if (!isset($scores[$result->getFirst()->getPlayer()->getId()])) {

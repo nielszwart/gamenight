@@ -38,6 +38,11 @@ class Event
 	private $image;
 
 	/**
+	 * @ORM\Column(type="string")
+	 */
+	private $sound;
+
+	/**
 	 * @ORM\ManyToMany(targetEntity="Game")
 	 */
 	private $games;
@@ -92,6 +97,16 @@ class Event
 		return $this->image = $value;
 	}
 
+	public function getSound()
+	{
+		return $this->sound;
+	}
+
+	public function setSound($value)
+	{
+		return $this->sound = $value;
+	}
+
 	public function getGames()
 	{
 		return $this->games;
@@ -107,6 +122,9 @@ class Event
 		}	
 		if (!empty($values['image'])) {
 			$this->setImage($values['image']);
+		}
+		if (!empty($values['sound'])) {
+			$this->setSound($values['sound']);
 		}
 		if (!empty($values['slug'])) {
 			$this->setSlug($values['slug']);

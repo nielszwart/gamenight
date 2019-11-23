@@ -21,15 +21,37 @@ class ScoringService
     {
     	$gameScores = ['totals' => []];
 
-    	foreach ($event->getGames() as $game) {
-	    	switch ($game->getSlug()) {
-	    		case 'mario-kart':
-	    			$gameScores[$game->getSlug()] =$this->calculateScoresMarioKart($event, $game);
-	    			break;
-				case '8bit-fiesta':
-					$gameScores[$game->getSlug()] = $this->calculateScores8BitFiesta($event, $game);
-					break;
-    		}
+
+    	switch ($event->getSlug()) {
+    		case 'mario-kart':
+		    	foreach ($event->getGames() as $game) {
+			    	switch ($game->getSlug()) {
+			    		case 'mario-kart':
+			    			$gameScores[$game->getSlug()] = $this->calculateScoresMarioKart($event, $game);
+			    			break;
+						case '8bit-fiesta':
+							$gameScores[$game->getSlug()] = $this->calculateScores8BitFiesta($event, $game);
+							break;
+		    		}
+		    	}    		
+
+    			break;
+    		case 'wondershotpuyo':
+		    	foreach ($event->getGames() as $game) {
+			    	switch ($game->getSlug()) {
+						case '8bit-fiesta':
+							$gameScores[$game->getSlug()] = $this->calculateScoresSideGame($event, $game);
+							break;
+						case 'puyo-puyo':
+							$gameScores[$game->getSlug()] = $this->calculateScoresMainGame($event, $game);
+							break;
+						case 'wonder-shot':
+							$gameScores[$game->getSlug()] = $this->calculateScoresMainGame($event, $game);
+							break;
+		    		}
+		    	}
+
+    			break;
     	}
 
     	foreach ($gameScores as $scores) {
@@ -47,6 +69,98 @@ class ScoringService
     	$gameScores['totals'] = $this->sortByScore($gameScores['totals']);
 
     	return $gameScores;
+    }
+
+    public function calculateScoresMainGame(Event $event, Game $game)
+    {
+		$results = $this->doctrine->getRepository(Result::class)->findBy([
+			'event' => $event->getId(),
+			'game' => $game->getId(),
+		]);
+
+		$scores = [];
+		foreach ($results as $result) {
+			$scores = $this->setPlayers($scores, $result);
+			if (!empty($result->getThird()) && !empty($result->getFourth())) {
+				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 80;
+				$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
+				$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 50;
+				$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
+				$scores[$result->getThird()->getPlayer()->getId()]['points'] += 30;
+				$scores[$result->getThird()->getPlayer()->getId()]['games']++;
+				$scores[$result->getFourth()->getPlayer()->getId()]['points'] += 0;
+				$scores[$result->getFourth()->getPlayer()->getId()]['games']++;
+			} elseif (!empty($result->getThird()) && empty($result->getFourth())) {
+				$scores = $this->setPlayers($scores, $result);
+				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 80;
+				$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
+				$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 50;
+				$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
+				$scores[$result->getThird()->getPlayer()->getId()]['points'] += 0;
+				$scores[$result->getThird()->getPlayer()->getId()]['games']++;
+			} elseif (empty($result->getThird()) && empty($result->getFourth())) {
+				$scores = $this->setPlayers($scores, $result);
+				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 80;
+				$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
+				$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 30;
+				$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
+			}
+		}
+
+		foreach ($scores as &$score) {
+			$score['score'] = round($score['points'] / $score['games']);
+		}
+		unset($score);
+
+		$scores = $this->sortByScore($scores);
+
+		return $scores;		
+    }
+
+    public function calculateScoresSideGame(Event $event, Game $game)
+    {
+		$results = $this->doctrine->getRepository(Result::class)->findBy([
+			'event' => $event->getId(),
+			'game' => $game->getId(),
+		]);
+
+		$scores = [];
+		foreach ($results as $result) {
+			$scores = $this->setPlayers($scores, $result);
+
+			if ($scores[$result->getFirst()->getPlayer()->getId()]['points'] < 40) {
+				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 8;
+				if ($scores[$result->getFirst()->getPlayer()->getId()]['points'] > 40) {
+					$scores[$result->getFirst()->getPlayer()->getId()]['points'] = 40;
+				}
+			}
+
+			$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
+			$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
+			if (!empty($result->getThird())) {
+				$scores[$result->getThird()->getPlayer()->getId()]['games']++;
+
+				if ($scores[$result->getSecond()->getPlayer()->getId()]['points'] < 40) {
+					$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 4;
+
+					if ($scores[$result->getSecond()->getPlayer()->getId()]['points'] > 40) {
+						$scores[$result->getSecond()->getPlayer()->getId()]['points'] = 40;
+					}					
+				}				
+			}
+			if (!empty($result->getFourth())) {
+				$scores[$result->getFourth()->getPlayer()->getId()]['games']++;
+			}
+		}
+
+		foreach ($scores as &$score) {
+			$score['score'] = $score['points'];
+		}
+		unset($score);
+
+		$scores = $this->sortByScore($scores);
+
+		return $scores;
     }
 
 	public function calculateScoresMarioKart(Event $event, Game $game)
@@ -129,53 +243,6 @@ class ScoringService
 
 		return $scores;
 	}
-
-	public function calculateScoresPuyoPuyo(Event $event, Game $game) 
-	{
-		$results = $this->doctrine->getRepository(Result::class)->findBy([
-			'event' => $event->getId(),
-			'game' => $game->getId(),
-		]);
-
-		$scores = [];
-		foreach ($results as $result) {
-			$scores = $this->setPlayers($scores, $result);
-			if (!empty($result->getThird()) && !empty($result->getFourth())) {
-				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 80;
-				$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
-				$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 50;
-				$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
-				$scores[$result->getThird()->getPlayer()->getId()]['points'] += 30;
-				$scores[$result->getThird()->getPlayer()->getId()]['games']++;
-				$scores[$result->getFourth()->getPlayer()->getId()]['points'] += 0;
-				$scores[$result->getFourth()->getPlayer()->getId()]['games']++;
-			} elseif (!empty($result->getThird()) && empty($result->getFourth())) {
-				$scores = $this->setPlayers($scores, $result);
-				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 80;
-				$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
-				$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 50;
-				$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
-				$scores[$result->getThird()->getPlayer()->getId()]['points'] += 0;
-				$scores[$result->getThird()->getPlayer()->getId()]['games']++;
-			} elseif (empty($result->getThird()) && empty($result->getFourth())) {
-				$scores = $this->setPlayers($scores, $result);
-				$scores[$result->getFirst()->getPlayer()->getId()]['points'] += 80;
-				$scores[$result->getFirst()->getPlayer()->getId()]['games']++;
-				$scores[$result->getSecond()->getPlayer()->getId()]['points'] += 30;
-				$scores[$result->getSecond()->getPlayer()->getId()]['games']++;
-			}
-		}
-
-		foreach ($scores as &$score) {
-			$score['score'] = round($score['points'] / $score['games']);
-		}
-		unset($score);
-
-		$scores = $this->sortByScore($scores);
-
-		return $scores;		
-	}
-
 
 	protected function setPlayers($scores, Result $result)
 	{

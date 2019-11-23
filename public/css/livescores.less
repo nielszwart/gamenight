@@ -6,7 +6,6 @@
 	right: 0;
 	left: 0;
 	bottom: 0;
-	background-image: url('../img/mariokart-big.jpg');
 	background-position: center center;
 	background-size: cover;
 	background-repeat: no-repeat;
@@ -26,8 +25,8 @@
 	}
 
 	.scores {
-		width: 90%;
-		padding: 25px;
+		width: 100%;
+		padding: 50px;
 		font-size: 2em;
 		margin: 0 auto;
 		white-space: nowrap;
@@ -50,11 +49,9 @@
 		}
 
 		.totals {
-			text-align: center;
+			display: inline-block;
 
 			.totalscores-positioning {
-				margin: 0 auto;
-				display: inline-block;
 		
 				.totalscore {
 					text-align: left;
@@ -63,8 +60,7 @@
 		}
 
 		.gamescores {
-			float: left;
-			width: 50%;
+			display: inline-block;
 			text-align: center;
 
 			.gamescores-positioning {
@@ -79,10 +75,9 @@
 
 		.score-block {
 			border-radius: 5px;
-			padding: 20px 50px;
+			padding: 20px;
 
 			.score-row {
-				min-width: 550px;
 				color: white;
 				margin-top: 3px;
 				background-color: rgba(0, 0, 0, 0.6);
@@ -99,7 +94,7 @@
 
 				.nickname {
 					font-family: 'Permanent Marker', cursive;
-					width: 300px;
+					width: 200px;
 					float: left;		
 				}
 
@@ -111,7 +106,7 @@
 				.score,
 				.points,
 				.games {
-					width: 75px;
+					width: 50px;
 					float: right;
 					text-align: right;
 				}				

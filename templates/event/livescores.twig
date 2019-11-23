@@ -4,7 +4,7 @@
 {% block fonts %}<link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">{% endblock %}
 
 {% block body %}
-<div class="livescores">
+<div class="livescores" style="background-image: url({{ asset('img/' ~ event.slug ~ '-scores.jpg') }});">
 	<div class="scores">
 		<div id="totals" class="totals">
 			<div class="score-block totalscores-positioning">
@@ -22,7 +22,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="clear"></div>
 		{% for game in event.games %}
 			<div class="gamescores">
 				<div class="score-block gamescores-positioning">

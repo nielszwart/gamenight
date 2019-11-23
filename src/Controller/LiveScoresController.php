@@ -75,7 +75,7 @@ class LiveScoresController extends BaseController
             });
             $scores['totals'] = $x;
 
-            $scores['mario-kart'][] = [
+            $scores['puyo-puyo'][] = [
                 'score' => rand(0,50),
                 'nickname' => 'Naomi',
                 'points' => rand(0,500),
